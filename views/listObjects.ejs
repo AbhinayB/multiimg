@@ -1,0 +1,23 @@
+<div ng-controller="ObjectList" ng-cloak>
+    <md-list-item class="md-3-line" ng-repeat="item in objectList">
+        <img ng-src="https://s3.amazonaws.com/{{buck}}/{{item.Key}}" class="md-avatar" />
+        <div class="md-list-item-text" layout="column">
+            <h3>{{ item.Key }}</h3>
+            <h4>{{ item.LastModified }}</h4>
+        </div>
+        <md-button class=" md-secondary  md-icon-button" aria-label="More">
+            <i class="material-icons">
+                                edit
+                    </i>
+        </md-button>
+        <md-button class="md-secondary md-icon-button" ng-click="deleteobject(item.Key)" aria-label="call">
+            <i class="material-icons">
+                                delete
+                                </i>
+        </md-button>
+
+        <!-- <md-checkbox class="md-secondary" ng-model="is_checked" ng-change="selectedBucket(item.Name)"></md-checkbox> -->
+    </md-list-item>
+
+    </md-list>
+</div>

@@ -1,0 +1,36 @@
+<!--<md-list ng-cloak>
+    <md-button ng-click="deleteselected()" class="md-warn md-raised">Delete Selected</md-button>
+    <md-list-item ng-repeat="item in data.Buckets">
+        <p> {{ item.Name }} &nbsp&nbsp<i> {{ item.CreationDate }} </i> </p>
+ng-click="selectedBucket(item.Name)"
+        <md-checkbox class="md-secondary" ng-model="c_delete"></md-checkbox>
+    </md-list-item>
+</md-list>-->
+<div ng-controller="BucketListController" ng-cloak>
+    <md-list>
+        <md-list-item class="md-3-line" ng-repeat="item in bucketList.Buckets">
+            <div class="md-list-item-text" layout="column">
+                <h3>{{ item.Name }}</h3>
+                <h4>{{ item.CreationDate }}</h4>
+            </div>
+            <md-button class=" md-secondary   md-icon-button" aria-label="More" ng-click="gotoState('listObjects',item.Name)">
+                <i class="material-icons">
+                            list
+                        </i>
+            </md-button>
+            <md-button class=" md-secondary  md-icon-button" aria-label="More" ng-click="gotoView('FiletoBucket')">
+                <i class="material-icons">
+                            edit
+                </i>
+            </md-button>
+            <md-button class="md-secondary md-icon-button" ng-click="deleteBucket(item.Name)" aria-label="call">
+                <i class="material-icons">
+                            delete
+                            </i>
+            </md-button>
+
+            <!-- <md-checkbox class="md-secondary" ng-model="is_checked" ng-change="selectedBucket(item.Name)"></md-checkbox> -->
+        </md-list-item>
+
+    </md-list>
+</div>

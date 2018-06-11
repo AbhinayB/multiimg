@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title> aws sdk
+    </title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" type="text/css" href="./stylesheets/lib.css">
+    <link rel="stylesheet" type="text/css" href="./stylesheets/style.css">
+    <script src="./javascripts/lib.js"></script>
+    <script src="./javascripts/built.js"></script>
+</head>
+
+<body ng-app="awtapp">
+
+    <div ng-controller="MyController">
+
+        <md-button class="md-raised md-primary" ng-click="gotoView('auth')">Auth</md-button>
+        <md-button class="md-raised md-primary" ng-click="gotoView('bucketlist')">List Buckets</md-button>
+        <md-button class="md-raised md-primary" ng-click="gotoView('createBucket')">Create Bucket</md-button>
+        <div ng-view></div>
+    </div>
+
+</body>
+
+
+</html>
