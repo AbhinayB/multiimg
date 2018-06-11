@@ -1,8 +1,8 @@
 angular.module('awtapp')
     .controller('AuthController', ['$scope', '$http', '$mdToast', function($scope, $http, $mdToast, Person) {
         $scope.person = {
-                id: "AKIAID3JGOUPCPUKDC5Q",
-                key: "SU+2Va36E2QP80F8whIMuURBTdUGt5TXOzcZ2mDP"
+                id: "xxx",
+                key: "xxx"
             }
             //Person.id = $scope.person.id;
             //Person.key = $scope.person.key;
