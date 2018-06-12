@@ -2,6 +2,10 @@ var express = require('express');
 var router = express.Router();
 var AWS = require('aws-sdk');
 var cong = require('./amazonaws');
+var path = require('path');
+var crypto = require('crypto');
+var fs = require('fs');
+let multer = require('multer');
 const config = {
     accessKeyId: '',
     secretAccessKey: '',
@@ -16,6 +20,25 @@ function initS3(config) {
     s3 = new AWS.S3(config);
 }
 
+
+var storage = multer.diskStorage({
+    destination: './files/',
+    filename: function(req, file, cb) {
+        crypto.pseudoRandomBytes(16, function(err, raw) {
+            if (err) return cb(err)
+            var timeStampInMs = new Date().getTime();
+
+            cb(null, timeStampInMs + ".png")
+        })
+    }
+})
+var upload = multer({ storage: storage });
+router.post('/savefile', upload.single('file'), (req, res, next) => {
+    res.json({
+        success: "router working",
+        filenme: req.file.filename
+    });
+});
 
 /* GET home page. */
 router.get('/', function(req, res, next) {

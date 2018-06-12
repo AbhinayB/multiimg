@@ -20,7 +20,10 @@ angular.module('awtapp', ['ngAria', 'ngRoute', 'ngMaterial', 'ngMessages']).conf
         templateUrl: '/views/FiletoBucket',
         controller: 'FiletoBucket'
     }).
-
+    when('/views/multiupload', {
+        templateUrl: '/views/multiupload',
+        controller: 'Uploader'
+    }).
     otherwise({
         redirectTo: '/views/auth'
     });

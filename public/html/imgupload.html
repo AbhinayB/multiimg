@@ -1,0 +1,22 @@
+<div md-rowspan="2" md-row-height-gt-md="1:1" md-row-height="2:2" style="background: white;overflow: scroll;height: 520px;position: relative;">
+    <md-grid-list md-cols-xs="1" md-cols-sm="2" md-cols-md="4" md-cols-gt-md="6" md-row-height-gt-md="1:1" md-row-height="2:2" md-gutter="12px" md-gutter-gt-sm="8px">
+        <md-grid-tile ng-if="l.imgsrc" ng-repeat="l in selectedfiles" ng-click="showDialog($event,l)">
+            <!-- md-rowspan="3" -->
+            <!-- <img src="l.name" /> -->
+            <div style="{{l.imgprogress}}"><img style="width: 100%;max-height: 240px" src="{{l.imgsrc}}" /></div>
+            <md-grid-tile-footer>
+                <h3 data-ng-init="idata=l;"><span ng-click="removeItem(idata)"><i  class="material-icons ng-scope">
+                    delete
+                    </i></span></h3>
+            </md-grid-tile-footer>
+        </md-grid-tile>
+
+    </md-grid-list>
+</div>
+<div align="right">
+    <md-input-container md-no-float class="md-block">
+        <md-button ng-click="selectFiles()" class="md-raised md-primary">Select</md-button>
+        <input type="file" multiple="multiple" style="display:none" id="{{id}}" onchange="angular.element(this).scope().filesChanged(this)" />
+        <md-button ng-click="uploadFiles()" class="md-raised md-primary">Upload</md-button>
+    </md-input-container>
+</div>

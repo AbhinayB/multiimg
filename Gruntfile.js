@@ -18,7 +18,7 @@ module.exports = function(grunt) {
                 dest: 'public/javascripts/lib.js',
             },
             dist: {
-                src: ['./frontend/app.js', './frontend/controller/*.js'],
+                src: ['./frontend/app.js', './frontend/controller/*.js', './frontend/directives/*.js'],
                 dest: 'public/javascripts/built.js',
             },
             libcascade: {
