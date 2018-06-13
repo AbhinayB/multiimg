@@ -352,27 +352,56 @@ angular.module('awtapp', ['ngAria', 'ngRoute', 'ngMaterial', 'ngMessages']).conf
             }
         }
     }
-
-    $scope.showDialog = function($event, imagedata) {
-        // var parentEl = angular.element(document.body);
+    $scope.showDialog = function(ev, imagedata) {
+        var parentEl = angular.element(document.body);
         console.log(imagedata);
         $mdDialog.show({
-            // parent: parentEl,
-            targetEvent: $event,
+            parent: parentEl,
+            targetEvent: ev,
+            clickOutsideToClose: true,
             template: '<md-dialog>' +
+                '<md-toolbar><h3>{{items.imgname}}</h3></md-toolbar>' +
                 '  <md-dialog-content>' +
-                '<div><img src="{{imagedata.imgsrc}}" /></div>' +
-                '<div>{{imagedata.imgname}}</div>' +
+                '<div style="height:30em"><img style="height:100%" src="{{items.imgsrc}}" /></div>' +
+                '<div><md-input-container class="md-block" flex-gt-sm>' +
+                '<label>Alt</label>' +
+                '<input ng-model="reply.alttext">' +
+                ' </md-input-container></div>' +
+                '<div><md-input-container class="md-block" flex-gt-sm>' +
+                '<label>Desc</label>' +
+                '<input ng-model="reply.desctext">' +
+                ' </md-input-container></div>' +
                 '  </md-dialog-content>' +
                 '  <md-dialog-actions>' +
-                '    <md-button ng-click="closeDialog()" class="md-primary">' +
-                '      Close Dialog' +
+                '    <md-button class="md-primary" ng-click="closeit()">' +
+                '      Save' +
                 '    </md-button>' +
                 '  </md-dialog-actions>' +
                 '</md-dialog>',
             locals: {
                 items: imagedata
-            }
+            },
+            controller: ['$scope', 'items', function($scope, items) {
+                $scope.items = items;
+                $scope.reply = {
+                    alttext: "",
+                    desctext: ""
+                };
+                $scope.closeit = function() {
+                    console.log(JSON.stringify($scope.reply));
+                    $mdDialog.hide($scope.reply);
+                };
+            }]
+        }).then(function(reply) {
+            var index = $scope.selectedfiles.indexOf(imagedata);
+            imagedata.textdata = reply;
+            $scope.selectedfiles[index] = imagedata;
+            $scope.filestoUpload.push(imagedata);
+            imagedata.imgprogress = "opacity:0.5";
+            // console.log($scope.selectedfiles);
+            // console.log("-----" + JSON.stringify(reply));
+        }, function() {
+            $scope.data = "";
         });
     }
 
@@ -387,38 +416,39 @@ angular.module('awtapp', ['ngAria', 'ngRoute', 'ngMaterial', 'ngMessages']).conf
             }
         }).then(function successCallback(response) {
             console.log("Success:" + response);
+            console.log($scope.selectedfiles);
             $scope.selectedfiles[index].imgprogress = "opacity:1";
         }, function errorCallback(response) {
             console.log("Error:" + response);
         });
     }
     $scope.removeItem = function(ele) {
-        var index = $scope.selectedfiles.indexOf(ele);
-        $scope.selectedfiles.splice(index, 1);
-        var index1 = $scope.filestoUpload.indexOf(ele);
-        console.log(index1);
-        if (index1 > -1) {
-            $scope.filestoUpload.splice(index1, 1);
+            var index = $scope.selectedfiles.indexOf(ele);
+            $scope.selectedfiles.splice(index, 1);
+            var index1 = $scope.filestoUpload.indexOf(ele);
+            console.log(index1);
+            if (index1 > -1) {
+                $scope.filestoUpload.splice(index1, 1);
+            }
+            console.log($scope.selectedfiles);
+            console.log($scope.filestoUpload);
+            console.log("item removed" + ele);
         }
-        console.log($scope.selectedfiles);
-        console.log($scope.filestoUpload);
-        console.log("item removed" + ele);
-    }
-    $scope.showAdvanced = function(ev) {
-        $mdDialog.show({
-                controller: DialogController,
-                templateUrl: 'dialog1.tmpl.html',
-                parent: angular.element(document.body),
-                targetEvent: ev,
-                clickOutsideToClose: true,
-                fullscreen: $scope.customFullscreen // Only for -xs, -sm breakpoints.
-            })
-            .then(function(answer) {
-                $scope.status = 'You said the information was "' + answer + '".';
-            }, function() {
-                $scope.status = 'You cancelled the dialog.';
-            });
-    };
+        // $scope.showAdvanced = function(ev) {
+        //     $mdDialog.show({
+        //             controller: DialogController,
+        //             templateUrl: 'dialog1.tmpl.html',
+        //             parent: angular.element(document.body),
+        //             targetEvent: ev,
+        //             clickOutsideToClose: true,
+        //             fullscreen: $scope.customFullscreen // Only for -xs, -sm breakpoints.
+        //         })
+        //         .then(function(answer) {
+        //             $scope.status = 'You said the information was "' + answer + '".';
+        //         }, function() {
+        //             $scope.status = 'You cancelled the dialog.';
+        //         });
+        // };
     $scope.uploadFiles = function() {
         for (var i = 0; i < $scope.filestoUpload.length; i++) {
             uploadEachFile($scope.filestoUpload[i].imgdata, "/amazon/savefile", i, function(e) {
