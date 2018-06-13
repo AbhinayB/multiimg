@@ -405,9 +405,9 @@ angular.module('awtapp', ['ngAria', 'ngRoute', 'ngMaterial', 'ngMessages']).conf
         });
     }
 
-    function uploadEachFile(file, rUrl, index, underProgress) {
+    function uploadEachFile(file, rUrl, underProgress) {
         var fd = new FormData();
-        fd.append('file', file);
+        fd.append('file', file.imgdata);
         $http.post(rUrl, fd, {
             transformRequest: angular.identity,
             headers: { 'Content-Type': undefined },
@@ -416,7 +416,7 @@ angular.module('awtapp', ['ngAria', 'ngRoute', 'ngMaterial', 'ngMessages']).conf
             }
         }).then(function successCallback(response) {
             console.log("Success:" + response);
-            console.log($scope.selectedfiles);
+            var index = $scope.selectedfiles.indexOf(file);
             $scope.selectedfiles[index].imgprogress = "opacity:1";
         }, function errorCallback(response) {
             console.log("Error:" + response);
@@ -451,7 +451,7 @@ angular.module('awtapp', ['ngAria', 'ngRoute', 'ngMaterial', 'ngMessages']).conf
         // };
     $scope.uploadFiles = function() {
         for (var i = 0; i < $scope.filestoUpload.length; i++) {
-            uploadEachFile($scope.filestoUpload[i].imgdata, "/amazon/savefile", i, function(e) {
+            uploadEachFile($scope.filestoUpload[i], "/amazon/savefile", function(e) {
                 if (e.lengthComputable) {
                     var progressBar = (e.loaded / e.total) * 100;
                     console.log(progressBar);
