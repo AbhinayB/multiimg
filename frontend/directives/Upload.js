@@ -1,9 +1,10 @@
 angular.module('awtapp').directive('upload', function($http) {
     return {
+        scope: true,
         restrict: 'E',
         transclude: true,
         scope: {
-            alttext: '=info',
+            uploadurl: '=',
             imginfo: '=',
             id: '='
         },
@@ -65,8 +66,8 @@ angular.module('awtapp').directive('upload', function($http) {
             controller: ['$scope', 'items', function($scope, items) {
                 $scope.items = items;
                 $scope.reply = {
-                    alttext: "",
-                    desctext: ""
+                    alttext: imagedata.textdata.alttext,
+                    desctext: imagedata.textdata.desctext
                 };
                 $scope.closeit = function() {
                     console.log(JSON.stringify($scope.reply));
@@ -79,8 +80,6 @@ angular.module('awtapp').directive('upload', function($http) {
             $scope.selectedfiles[index] = imagedata;
             $scope.filestoUpload.push(imagedata);
             imagedata.imgprogress = "opacity:0.5";
-            // console.log($scope.selectedfiles);
-            // console.log("-----" + JSON.stringify(reply));
         }, function() {
             $scope.data = "";
         });
@@ -99,40 +98,26 @@ angular.module('awtapp').directive('upload', function($http) {
             console.log("Success:" + response);
             var index = $scope.selectedfiles.indexOf(file);
             $scope.selectedfiles[index].imgprogress = "opacity:1";
+            $scope.selectedfiles[index].isuploaded = true
         }, function errorCallback(response) {
             console.log("Error:" + response);
         });
     }
     $scope.removeItem = function(ele) {
-            var index = $scope.selectedfiles.indexOf(ele);
-            $scope.selectedfiles.splice(index, 1);
-            var index1 = $scope.filestoUpload.indexOf(ele);
-            console.log(index1);
-            if (index1 > -1) {
-                $scope.filestoUpload.splice(index1, 1);
-            }
-            console.log($scope.selectedfiles);
-            console.log($scope.filestoUpload);
-            console.log("item removed" + ele);
+        var index = $scope.selectedfiles.indexOf(ele);
+        $scope.selectedfiles.splice(index, 1);
+        var index1 = $scope.filestoUpload.indexOf(ele);
+        console.log(index1);
+        if (index1 > -1) {
+            $scope.filestoUpload.splice(index1, 1);
         }
-        // $scope.showAdvanced = function(ev) {
-        //     $mdDialog.show({
-        //             controller: DialogController,
-        //             templateUrl: 'dialog1.tmpl.html',
-        //             parent: angular.element(document.body),
-        //             targetEvent: ev,
-        //             clickOutsideToClose: true,
-        //             fullscreen: $scope.customFullscreen // Only for -xs, -sm breakpoints.
-        //         })
-        //         .then(function(answer) {
-        //             $scope.status = 'You said the information was "' + answer + '".';
-        //         }, function() {
-        //             $scope.status = 'You cancelled the dialog.';
-        //         });
-        // };
+        console.log($scope.selectedfiles);
+        console.log($scope.filestoUpload);
+        console.log("item removed" + ele);
+    }
     $scope.uploadFiles = function() {
         for (var i = 0; i < $scope.filestoUpload.length; i++) {
-            uploadEachFile($scope.filestoUpload[i], "/amazon/savefile", function(e) {
+            uploadEachFile($scope.filestoUpload[i], $scope.uploadurl, function(e) {
                 if (e.lengthComputable) {
                     var progressBar = (e.loaded / e.total) * 100;
                     console.log(progressBar);
@@ -149,15 +134,19 @@ angular.module('awtapp').directive('upload', function($http) {
             var src = data.target.result;
             var size = ((file.size / (1024 * 1024)) > 1) ? (file.size / (1024 * 1024)) + ' mB' : (file.size / 1024) + ' kB';
             $scope.$apply(function() {
-                if (!$scope.selectedfiles.some(item => item.imgname === file.name)) {
-                    var imgobj = {
-                        'imgname': file.name,
-                        'imgsize': size,
-                        'imgtype': file.type,
-                        'imgsrc': src,
-                        'imgdata': file,
-                        'imgprogress': "opacity:0.5"
+                var imgobj = {
+                    'imgname': file.name,
+                    'imgsize': size,
+                    'imgtype': file.type,
+                    'imgsrc': src,
+                    'imgdata': file,
+                    'imgprogress': "opacity:0.5",
+                    'textdata': {
+                        alttext: "",
+                        desctext: ""
                     }
+                }
+                if (!$scope.selectedfiles.some(item => item.imgdata === imgobj.imgdata)) {
                     $scope.selectedfiles.push(imgobj);
                     $scope.filestoUpload.push(imgobj);
                 }
