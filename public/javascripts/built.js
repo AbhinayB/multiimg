@@ -355,6 +355,7 @@ angular.module('awtapp', ['ngAria', 'ngRoute', 'ngMaterial', 'ngMessages']).conf
                 console.log(file.name + " is not image");
             }
         }
+        console.log($scope.selectedfiles);
     }
     $scope.showDialog = function(ev, imagedata) {
         var parentEl = angular.element(document.body);
@@ -392,7 +393,6 @@ angular.module('awtapp', ['ngAria', 'ngRoute', 'ngMaterial', 'ngMessages']).conf
                     desctext: imagedata.textdata.desctext
                 };
                 $scope.closeit = function() {
-                    console.log(JSON.stringify($scope.reply));
                     $mdDialog.hide($scope.reply);
                 };
             }]
@@ -402,8 +402,6 @@ angular.module('awtapp', ['ngAria', 'ngRoute', 'ngMaterial', 'ngMessages']).conf
             $scope.selectedfiles[index] = imagedata;
             $scope.filestoUpload.push(imagedata);
             imagedata.imgprogress = "opacity:0.5";
-            // console.log($scope.selectedfiles);
-            // console.log("-----" + JSON.stringify(reply));
         }, function() {
             $scope.data = "";
         });
@@ -424,7 +422,7 @@ angular.module('awtapp', ['ngAria', 'ngRoute', 'ngMaterial', 'ngMessages']).conf
             $scope.selectedfiles[index].imgprogress = "opacity:1";
             $scope.selectedfiles[index].isuploaded = true
         }, function errorCallback(response) {
-            console.log("Error:" + response);
+            // console.log("Error:" + response);
         });
     }
     $scope.removeItem = function(ele) {
@@ -435,9 +433,9 @@ angular.module('awtapp', ['ngAria', 'ngRoute', 'ngMaterial', 'ngMessages']).conf
         if (index1 > -1) {
             $scope.filestoUpload.splice(index1, 1);
         }
-        console.log($scope.selectedfiles);
-        console.log($scope.filestoUpload);
-        console.log("item removed" + ele);
+        // console.log($scope.selectedfiles);
+        // console.log($scope.filestoUpload);
+        // console.log("item removed" + ele);
     }
     $scope.uploadFiles = function() {
         for (var i = 0; i < $scope.filestoUpload.length; i++) {
@@ -446,10 +444,22 @@ angular.module('awtapp', ['ngAria', 'ngRoute', 'ngMaterial', 'ngMessages']).conf
                     var progressBar = (e.loaded / e.total) * 100;
                     console.log(progressBar);
                 }
-                console.log("Its Under Progress.....");
+                // console.log("Its Under Progress.....");
             });
         }
         $scope.filestoUpload = [];
+    }
+    $scope.isObjectExists = function(obj, insertCallback) {
+        var exists = false;
+        var index = 0
+        for (i = 0; i < $scope.selectedfiles.length; i++) {
+            index = i;
+            if (JSON.stringify($scope.selectedfiles[index]) === JSON.stringify(obj)) {
+                exists = true;
+            }
+        }
+        if (index == $scope.selectedfiles.length - 1)
+            insertCallback(exists);
     }
 
     function previewFile(file) {
@@ -457,25 +467,34 @@ angular.module('awtapp', ['ngAria', 'ngRoute', 'ngMaterial', 'ngMessages']).conf
         reader.onload = function(data) {
             var src = data.target.result;
             var size = ((file.size / (1024 * 1024)) > 1) ? (file.size / (1024 * 1024)) + ' mB' : (file.size / 1024) + ' kB';
-            $scope.$apply(function() {
-                var imgobj = {
-                    'imgname': file.name,
-                    'imgsize': size,
-                    'imgtype': file.type,
-                    'imgsrc': src,
-                    'imgdata': file,
-                    'imgprogress': "opacity:0.5",
-                    'textdata': {
-                        alttext: "",
-                        desctext: ""
-                    }
-                }
-                if (!$scope.selectedfiles.some(item => item.imgdata === imgobj.imgdata)) {
-                    $scope.selectedfiles.push(imgobj);
-                    $scope.filestoUpload.push(imgobj);
+            var imgobj = {
+                'imgname': file.name,
+                'imgsize': size,
+                'imgtype': file.type,
+                'imgsrc': src,
+                'imgdata': file,
+                'imgprogress': "opacity:0.5",
+                'priority': 0,
+                'textdata': {}
+            }
+            $scope.isObjectExists(imgobj, function(exists) {
+                console.log("this is status.." + exists);
+                if (!exists) {
+                    $scope.$apply(function() {
+                        $scope.selectedfiles.push(imgobj);
+                        $scope.filestoUpload.push(imgobj);
+                    });
                 }
             });
-            console.log($scope.selectedfiles);
+            // // if (!$scope.isObjectExists(imgobj)) {
+            // //     console.log($scope.isObjectExists(imgobj));
+            // //     $scope.$apply(function() {
+            // //         $scope.selectedfiles.push(imgobj);
+            // //         $scope.filestoUpload.push(imgobj);
+            // //     });
+            // }
+
+            // console.log($scope.selectedfiles);
         }
         reader.readAsDataURL(file);
     }
