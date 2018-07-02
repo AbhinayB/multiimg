@@ -14,7 +14,7 @@
 <div align="right">
     <md-input-container md-no-float class="md-block">
         <md-button ng-click="selectFiles()" class="md-raised md-primary">Select</md-button>
-        <input type="file" multiple="multiple" style="display:none" id="{{id}}" onchange="angular.element(this).scope().filesChanged(this)" />
+        <input type="file" multiple="multiple" style="display:none" id="{{id}}" onchange="angular.element(this).scope().filesChanged(this)" accept="image/*" />
         <md-button ng-click="uploadFiles()" class="md-raised md-primary">Upload</md-button>
     </md-input-container>
 </div>
